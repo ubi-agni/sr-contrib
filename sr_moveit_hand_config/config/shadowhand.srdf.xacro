@@ -42,7 +42,6 @@
        <joint name="${prefix}${joint_prefix}J5" value="0" /> 
       </xacro:if> 
   </xacro:macro>
-  </xacro:macro>
   <xacro:macro name="thumb_state_open" params="prefix is_lite">
       <joint name="${prefix}THJ1" value="0" />
       <joint name="${prefix}THJ2" value="0" />
