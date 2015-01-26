@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="shadowhand_motor">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg robot_name)">
   <xacro:include filename="$(find sr_moveit_hand_config)/config/shadowhand.srdf.xacro"/>
 
   <!-- hand group --> 
@@ -109,25 +109,25 @@
    <!-- pairs with thumb for groups -->
   <xacro:if value="$(arg th)">
     <xacro:if value="$(arg ff)">
-      <group name="first_finger_thumb">
+      <group name="$(arg prefix)first_finger_thumb">
         <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
         <xacro:finger prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
       </group>
     </xacro:if>
     <xacro:if value="$(arg mf)">
-      <group name="middle_finger_thumb">
+      <group name="$(arg prefix)middle_finger_thumb">
         <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
         <xacro:finger prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
       </group>
     </xacro:if>
     <xacro:if value="$(arg rf)">
-      <group name="ring_finger_thumb">
+      <group name="$(arg prefix)ring_finger_thumb">
         <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
         <xacro:finger prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
       </group>
     </xacro:if>
     <xacro:if value="$(arg lf)">
-      <group name="little_finger_thumb">
+      <group name="$(arg prefix)little_finger_thumb">
         <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
         <xacro:finger prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
       </group>
@@ -302,7 +302,7 @@
       <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="mf"  lf="0" />
     </xacro:if>
     <xacro:if value="$(arg rf)">
-      <xacro:finger_farfinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="mf"  lf="0" />
+      <xacro:finger_farfinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="rf"  lf="0" />
     </xacro:if>   
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
