@@ -17,6 +17,8 @@
   <param name="request_adapters" value="$(arg planning_adapters)" />
   <param name="start_state_max_bounds_error" value="$(arg start_state_max_bounds_error)" />
 
-  <rosparam command="load" file="$(find sr_moveit_hand_config)/config/ompl_planning.yaml"/>
+  <node name="load_ompl_planning" pkg="sr_moveit_hand_config" type="generate_load_moveit_config.py" respawn="false" output="screen" args="ompl_planning $(find sr_moveit_hand_config)/config/ompl_planning_template.yaml"/>
+
+
 
 </launch>

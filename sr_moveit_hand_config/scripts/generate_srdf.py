@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+#
+# author: Guillaume Walck <gwalck@techfak.uni-bielefeld.de>
+#
 
 import sys
 import os
