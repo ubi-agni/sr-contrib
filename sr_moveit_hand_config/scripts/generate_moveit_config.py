@@ -7,8 +7,49 @@ import rosparam
 import yaml
 
 def yaml_reindent(s, numspaces):
+  """
+  Add numspaces space in fron of each line of the input string
+    @param s: input string
+    @type s:  str
+    @param numspaces: number of spaces to indent the string with
+    @type numspaces:  int
+    @return s_intend: indented string
+  """
   s_indent = "\n".join((numspaces * " ") + i for i in s.splitlines())
   return s_indent
+
+
+def find_prefix(robot):
+  """
+  Find the prefix using the always available shadow_hand group name
+    @param robot: parsed SRDF
+    @type robot:  SRDF object
+    @return prefix: prefix in a string
+  """
+  prefix=""
+  for key in robot.group_map:
+    if key.endswith("shadow_hand"):
+      prefix=key[0:key.find("shadow_hand")]
+  return prefix
+  
+def upload_output_params(upload_str,output_path=None,ns_=None):
+  """
+  Upload or output the input string on the correct param namespace or file
+    @param upload_str: string to be uploaded or written
+    @type upload_str:  str
+    @param output_path: output path for the file to be written. Upload if None
+    @type output_path:  str
+    @param ns_: namespace to use when uploading to param server
+    @type ns_:  str
+  """
+  if output_path==None:
+    paramlist=rosparam.load_str(upload_str,"generated", default_namespace=ns_)
+    for params,ns in paramlist:
+      rosparam.upload_params(ns, params)
+  else:
+    fw = open(output_path, "wb")
+    fw.write(upload_str)
+    fw.close()
 
 def generate_fake_controllers(robot, output_path=None, ns_=None):
     """
@@ -22,6 +63,7 @@ def generate_fake_controllers(robot, output_path=None, ns_=None):
     """
     output_str=""  
     output_str+="controller_list:\n"
+    # for each group
     for group in robot.groups:
       controller_name="  - name: fake_"+group.name+"_controller\n"
       output_str+=controller_name
@@ -31,15 +73,8 @@ def generate_fake_controllers(robot, output_path=None, ns_=None):
       else:
         for joint in group.joints:
             output_str+="      - "+joint.name+"\n"
-    
-    if output_path==None:
-      paramlist=rosparam.load_str(output_str,"generated", default_namespace=ns_)
-      for params,ns in paramlist:
-        rosparam.upload_params(ns, params)
-    else:
-      fw = open(output_path, "wb")
-      fw.write(output_str)
-      fw.close()
+    # load on param server or output to file
+    upload_output_params(output_str,output_path,ns_)
 
             
 def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", output_path=None, ns_=None):
@@ -62,10 +97,7 @@ def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", ou
     output_str+=yaml_reindent(yaml.dump(yamldoc["planner_configs"], default_flow_style=False, allow_unicode=True),2)
     output_str+="\n"
     # find prefix
-    prefix=""
-    for key in robot.group_map:
-      if key.endswith("shadow_hand"):
-        prefix=key[0:key.find("shadow_hand")]
+    prefix=find_prefix(robot)
     # for each group
     for group in robot.groups:
       output_str+=group.name+":\n"
@@ -76,16 +108,8 @@ def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", ou
       output_str+=yaml_reindent(group_dump,2)
       output_str+="\n"
     stream.close()
-    
-    if output_path==None:
-      paramlist=rosparam.load_str(output_str,"generated", default_namespace=ns_)
-      #print paramlist
-      for params,ns in paramlist:
-        rosparam.upload_params(ns, params)
-    else:
-      fw = open(output_path, "wb")
-      fw.write(output_str)
-      fw.close()
+    # load on param server or output to file
+    upload_output_params(output_str,output_path,ns_)
     
 
 def generate_kinematics(robot,template_path="kinematics_template.yaml" , output_path=None, ns_=None):
@@ -104,10 +128,7 @@ def generate_kinematics(robot,template_path="kinematics_template.yaml" , output_
     stream = open(template_path, 'r')
     yamldoc = yaml.load(stream)
     # find prefix
-    prefix=""
-    for key in robot.group_map:
-      if key.endswith("shadow_hand"):
-        prefix=key[0:key.find("shadow_hand")]
+    prefix=find_prefix(robot)
     # for each group
     for group in robot.groups:
       # strip prefix if any
@@ -119,14 +140,8 @@ def generate_kinematics(robot,template_path="kinematics_template.yaml" , output_
         output_str+=yaml_reindent(kinematics_dump,2)
         output_str+="\n"
     stream.close()
-    if output_path==None:
-      paramlist=rosparam.load_str(output_str,"generated", default_namespace=ns_)
-      for params,ns in paramlist:
-        rosparam.upload_params(ns, params)
-    else:
-      fw = open(output_path, "wb")
-      fw.write(output_str)
-      fw.close()    
+    # load on param server or output to file
+    upload_output_params(output_str,output_path,ns_)
     
 
 def generate_joint_limits(robot,template_path="joint_limits_template.yaml", output_path=None, ns_=None):
@@ -161,21 +176,12 @@ def generate_joint_limits(robot,template_path="joint_limits_template.yaml", outp
         output_str+="\n"
     stream.close()
     # load on param server or output to file
-    if output_path==None:
-      paramlist=rosparam.load_str(output_str,"generated", default_namespace=ns_)
-      for params,ns in paramlist:
-        #print "params ",params , " ",ns
-        rosparam.upload_params(ns, params)
-    else:
-      fw = open(output_path, "wb")
-      fw.write(output_str)
-      fw.close()
+    upload_output_params(output_str,output_path,ns_)
     
 if __name__ == '__main__':
   
   parser = argparse.ArgumentParser(usage='Load an SRDF file')
   parser.add_argument('file', type=argparse.FileType('r'), nargs='?', default=None, help='File to load. Use - for stdin')
-  #parser.add_argument('-o', '--output', type=argparse.FileType('w'), default=None, help='Dump file to XML')
   args = parser.parse_args()
 
   if args.file is not None:

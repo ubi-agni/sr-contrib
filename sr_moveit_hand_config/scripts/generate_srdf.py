@@ -13,7 +13,9 @@ from rosgraph.names import load_mappings
 if __name__ == '__main__':
   """ 
   generate the srdf according to the urdf
-  syntax  generate_srdf
+  syntax  generate_srdf <xacro.srdf filename>
+  Note : The xacro.srdf filename should be the version without _prefix, 
+        as the name with prefix is generated from the one without 
   """
   if len(sys.argv) > 1:
     srdf_xacro_filename = sys.argv[1]
@@ -26,6 +28,9 @@ if __name__ == '__main__':
     urdf_str=rospy.get_param('/robot_description')   
     # parse it
     robot = URDF.from_xml_string(urdf_str)
+    # find which version of the hand should be generated (which fingers)
+    # also find the prefix if any
+    prefix=""
     ff=mf=rf=lf=th=False
     is_lite=True
     for key in robot.joint_map:
@@ -44,20 +49,23 @@ if __name__ == '__main__':
       if is_lite and key.endswith("WRJ2"):
         is_lite=False
     #print "found ",ff, mf, rf, lf, th, is_lite 
-    print "prefix ",prefix
+    #print "prefix ",prefix
+    # selection the correct hand version through arg substitution
     if len(prefix)>0:
       set_substitution_args_context(load_mappings(['prefix:='+str(prefix),'robot_name:=shadowhand_motor','ff:='+str(int(ff)),'mf:='+str(int(mf)),'rf:='+str(int(rf)),'lf:='+str(int(lf)),'th:='+str(int(th)),'is_lite:='+str(int(is_lite))]))
       # the prefix version of the srdf_xacro must be loaded
       srdf_xacro_filename = srdf_xacro_filename[0:srdf_xacro_filename.find(".xacro.srdf")]+"_prefix.xacro.srdf"
     else:
       set_substitution_args_context(load_mappings(['robot_name:=shadowhand_motor','ff:='+str(int(ff)),'mf:='+str(int(mf)),'rf:='+str(int(rf)),'lf:='+str(int(lf)),'th:='+str(int(th)),'is_lite:='+str(int(is_lite))]))
-    
+    # open and parse the xacro.srdf file
     srdf_xacro_file = open(srdf_xacro_filename, 'r')
     srdf_xacro_xml = parse(srdf_xacro_file)
     
+    # expand the xacro
     xacro.process_includes(srdf_xacro_xml, os.path.dirname(sys.argv[0]))
     xacro.eval_self_contained(srdf_xacro_xml)
     
+    # load the param on the param server
     rospy.set_param("robot_description_semantic",srdf_xacro_xml.toprettyxml(indent=' '))
     srdf_xacro_file.close()
   else:
