@@ -42,7 +42,7 @@ def generate_fake_controllers(robot, output_path=None, ns_=None):
       fw.close()
 
             
-def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", output_path="None", ns_=None):
+def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", output_path=None, ns_=None):
     """
     Generate ompl_planning yaml and direct it to file or load it to parameter server.
 	    @param robot: Parsed SRDF
@@ -61,9 +61,17 @@ def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", ou
     output_str+="planner_configs:\n"
     output_str+=yaml_reindent(yaml.dump(yamldoc["planner_configs"], default_flow_style=False, allow_unicode=True),2)
     output_str+="\n"
+    # find prefix
+    prefix=""
+    for key in robot.group_map:
+      if key.endswith("shadow_hand"):
+        prefix=key[0:key.find("shadow_hand")]
+    # for each group
     for group in robot.groups:
       output_str+=group.name+":\n"
-      group_config = yamldoc[group.name]
+      # strip prefix if any
+      group_name=group.name[len(prefix):]
+      group_config = yamldoc[group_name]
       group_dump = yaml.dump(group_config, default_flow_style=False, allow_unicode=True)
       output_str+=yaml_reindent(group_dump,2)
       output_str+="\n"
@@ -71,6 +79,7 @@ def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", ou
     
     if output_path==None:
       paramlist=rosparam.load_str(output_str,"generated", default_namespace=ns_)
+      #print paramlist
       for params,ns in paramlist:
         rosparam.upload_params(ns, params)
     else:
@@ -94,9 +103,17 @@ def generate_kinematics(robot,template_path="kinematics_template.yaml" , output_
     output_str="" 
     stream = open(template_path, 'r')
     yamldoc = yaml.load(stream)
+    # find prefix
+    prefix=""
+    for key in robot.group_map:
+      if key.endswith("shadow_hand"):
+        prefix=key[0:key.find("shadow_hand")]
+    # for each group
     for group in robot.groups:
-      if yamldoc.has_key(group.name):
-        kinematics_config = yamldoc[group.name]
+      # strip prefix if any
+      group_name=group.name[len(prefix):]
+      if yamldoc.has_key(group_name):
+        kinematics_config = yamldoc[group_name]
         output_str+=group.name+":\n"
         kinematics_dump = yaml.dump(kinematics_config, default_flow_style=False, allow_unicode=True)
         output_str+=yaml_reindent(kinematics_dump,2)
@@ -128,17 +145,26 @@ def generate_joint_limits(robot,template_path="joint_limits_template.yaml", outp
     stream = open(template_path, 'r')
     yamldoc = yaml.load(stream)
     output_str+="joint_limits:\n"
-    for joint in robot.group_map["shadow_hand"].joints:
-      if yamldoc["joint_limits"].has_key(joint.name):
-        joint_limits_config = yamldoc["joint_limits"][joint.name]
+    # find full hand key name
+    for key in robot.group_map:
+      if key.endswith("shadow_hand"):
+        group_name=key
+    # for each joint in full hand group
+    for joint in robot.group_map[group_name].joints:
+      joint_name = joint.name[-4:]
+      #print "testing joint name ",joint_name," out of ",joint.name
+      if yamldoc["joint_limits"].has_key(joint_name):
+        joint_limits_config = yamldoc["joint_limits"][joint_name]
         output_str+="  "+joint.name+":\n"
         joint_limits_dump = yaml.dump(joint_limits_config, default_flow_style=False, allow_unicode=True)
         output_str+=yaml_reindent(joint_limits_dump,4)
         output_str+="\n"
     stream.close()
+    # load on param server or output to file
     if output_path==None:
       paramlist=rosparam.load_str(output_str,"generated", default_namespace=ns_)
       for params,ns in paramlist:
+        #print "params ",params , " ",ns
         rosparam.upload_params(ns, params)
     else:
       fw = open(output_path, "wb")

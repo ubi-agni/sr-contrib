@@ -7,7 +7,7 @@
   <arg name="robot_description" default="robot_description"/>
 
 
-  <include file="$(find sr_moveit_hand_config)/launch/test_load.launch" />
+  <include file="$(find sr_moveit_hand_config)/launch/test_load_prefix.launch" />
   
   <!-- The semantic description that corresponds to the URDF -->
   <node name="generate_srdf" pkg="sr_moveit_hand_config" type="generate_srdf.py" respawn="false" output="screen" args="$(find sr_moveit_hand_config)/config/shadowhands.xacro.srdf" />
