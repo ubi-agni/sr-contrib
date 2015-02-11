@@ -103,13 +103,14 @@ def generate_ompl_planning(robot,template_path="ompl_planning_template.yaml", ou
     prefix=find_prefix(robot)
     # for each group
     for group in robot.groups:
-      output_str+=group.name+":\n"
       # strip prefix if any
       group_name=group.name[len(prefix):]
-      group_config = yamldoc[group_name]
-      group_dump = yaml.dump(group_config, default_flow_style=False, allow_unicode=True)
-      output_str+=yaml_reindent(group_dump,2)
-      output_str+="\n"
+      if yamldoc.has_key(group_name):
+        output_str+=group.name+":\n"
+        group_config = yamldoc[group_name]
+        group_dump = yaml.dump(group_config, default_flow_style=False, allow_unicode=True)
+        output_str+=yaml_reindent(group_dump,2)
+        output_str+="\n"
     stream.close()
     # load on param server or output to file
     upload_output_params(output_str,output_path,ns_)

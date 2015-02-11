@@ -67,6 +67,21 @@ shadow_hand:
     - PRMstarkConfigDefault
   projection_evaluator: joints(WRJ2,WRJ1)
   longest_valid_segment_fraction: 0.05
+handpalm:
+  planner_configs:
+    - SBLkConfigDefault
+    - ESTkConfigDefault
+    - LBKPIECEkConfigDefault
+    - BKPIECEkConfigDefault
+    - KPIECEkConfigDefault
+    - RRTkConfigDefault
+    - RRTConnectkConfigDefault
+    - RRTstarkConfigDefault
+    - TRRTkConfigDefault
+    - PRMkConfigDefault
+    - PRMstarkConfigDefault
+  projection_evaluator: joints(WRJ2,WRJ1)
+  longest_valid_segment_fraction: 0.05
 first_finger:
   planner_configs:
     - SBLkConfigDefault

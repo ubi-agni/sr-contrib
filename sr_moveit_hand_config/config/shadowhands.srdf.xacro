@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg robot_name)">
   <xacro:include filename="$(find sr_moveit_hand_config)/config/shadowhand.srdf.xacro"/>
-
+  <xacro:arg name="ff" default="1"/>
+  <xacro:arg name="mf" default="1"/>
+  <xacro:arg name="rf" default="1"/>
+  <xacro:arg name="lf" default="1"/>
+  <xacro:arg name="th" default="1"/>
+  <xacro:arg name="is_lite" default="0"/>
+  <xacro:arg name="robot_name" default="shadowhand_motor"/>
   <!-- hand group --> 
   <group name="shadow_hand">
     <xacro:if value="$(arg th)">
@@ -22,11 +28,14 @@
       </xacro:if>
       <joint name="WRJ2" />
       <joint name="WRJ1" />
-      <chain base_link="forearm" tip_link="palm" />
+     
     </xacro:unless>
     <group name="fingers" />
   </group>
- 
+  <!-- palm group --> 
+  <group name="handpalm">
+      <chain base_link="forearm" tip_link="palm" />
+  </group>
  <!-- single finger groups -->  
   <xacro:if value="$(arg ff)">  
     <group name="first_finger">
@@ -249,7 +258,7 @@
   </xacro:if>
   
   <xacro:unless value="$(arg is_lite)">
-    <end_effector name="shadow_hand_ee" parent_link="wrist" group="shadow_hand" />
+    <end_effector name="palm_ee" parent_link="palm" group="handpalm" />
   </xacro:unless>  
     
     
