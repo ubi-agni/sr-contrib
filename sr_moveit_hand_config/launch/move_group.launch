@@ -1,9 +1,16 @@
 <launch>
 
+  <arg name="load_robot_description" default="false"/> 
+  <arg name="robot_description" default="robot_description"/> 
+  <arg name="hand_urdf" default="$(find sr_description)/robots/shadowhand_motor.urdf.xacro"/>
+ 
   <include file="$(find sr_moveit_hand_config)/launch/planning_context.launch" >
-    <arg name="load_robot_description" value="true"/> 
+    <arg name="load_robot_description" value="$(arg load_robot_description)"/> 
+    <arg name="robot_description" value="$(arg robot_description)"/> 
+    <arg name="hand_urdf" value="$(arg hand_urdf)"/> 
   </include>
 
+  
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />

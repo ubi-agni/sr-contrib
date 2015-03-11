@@ -5,16 +5,19 @@
 
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
-
-
-  <include file="$(find sr_moveit_hand_config)/launch/test_load.launch" />
+  
+  <!-- The name of the URDF xaro to be loaded -->
+  <arg name="hand_urdf" default="shadowhand_motor.urdf.xacro"/>
+    
+  <include file="$(find sr_moveit_hand_config)/launch/test_load.launch" >
+    <arg name="load_robot_description" value="$(arg load_robot_description)"/>
+    <arg name="robot_description" value="$(arg robot_description)"/>
+    <arg name="hand_urdf" value="$(arg hand_urdf)"/>
+  </include>
+    
   
   <!-- The semantic description that corresponds to the URDF -->
   <node name="generate_srdf" pkg="sr_moveit_hand_config" type="generate_srdf.py" respawn="false" output="screen" args="$(find sr_moveit_hand_config)/config/shadowhands.srdf.xacro" />
-    
-  <!--  blocks the other param loader and deadlocks on robotdescription missing 
-  <param name="$(arg robot_description)_semantic" command="$(find sr_moveit_hand_config)/scripts/generate_srdf.py  $(find sr_moveit_hand_config)/config/shadowhand_motor.srdf" />
-  -->
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
@@ -31,7 +34,5 @@
   </group>
   <!-- ompl planning params -->
   <node name="load_ompl_planning" pkg="sr_moveit_hand_config" type="generate_load_moveit_config.py" respawn="false" output="screen" args="ompl_planning $(find sr_moveit_hand_config)/config/ompl_planning_template.yaml"/>
-
-
 
 </launch>

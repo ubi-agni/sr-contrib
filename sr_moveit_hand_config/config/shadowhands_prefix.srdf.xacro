@@ -7,64 +7,79 @@
   <xacro:arg name="rf" default="1"/>
   <xacro:arg name="lf" default="1"/>
   <xacro:arg name="th" default="1"/>
+  <xacro:arg name="ff_bio" default="0"/>
+  <xacro:arg name="mf_bio" default="0"/>
+  <xacro:arg name="rf_bio" default="0"/>
+  <xacro:arg name="lf_bio" default="0"/>
+  <xacro:arg name="th_bio" default="0"/>     
   <xacro:arg name="is_lite" default="0"/>
   <xacro:arg name="robot_name" default="shadowhand_motor"/>
   
   <!-- hand group --> 
   <group name="$(arg prefix)shadow_hand">
     <xacro:if value="$(arg th)">
-      <xacro:thumb prefix="$(arg prefix)" is_lite="$(arg is_lite)"/>
+      <xacro:thumblinks prefix="$(arg prefix)" bio="$(arg th_bio)"/>
+      <xacro:thumbjoints prefix="$(arg prefix)"/>
     </xacro:if>
     <xacro:if value="$(arg ff)">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
+      <xacro:fingerlinks prefix="$(arg prefix)" link_prefix="ff" bio="$(arg ff_bio)" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
     </xacro:if>
     <xacro:if value="$(arg mf)">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
+      <xacro:fingerlinks prefix="$(arg prefix)" link_prefix="mf" bio="$(arg mf_bio)" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
     </xacro:if>
     <xacro:if value="$(arg rf)">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
+      <xacro:fingerlinks prefix="$(arg prefix)" link_prefix="rf" bio="$(arg rf_bio)" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
     </xacro:if>
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
+        <xacro:fingerlinks prefix="$(arg prefix)" link_prefix="lf" bio="$(arg lf_bio)" lf="1"/>
+        <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
       </xacro:if>
       <joint name="$(arg prefix)WRJ2" />
+      <link name="$(arg prefix)wrist" />
       <joint name="$(arg prefix)WRJ1" />
       <chain base_link="$(arg prefix)forearm" tip_link="$(arg prefix)palm" />
     </xacro:unless>
+    <link name="$(arg prefix)palm" />
+    <link name="$(arg prefix)forearm" />
+    
+    
     <group name="$(arg prefix)fingers" />
   </group>
  
  <!-- single finger groups -->  
   <xacro:if value="$(arg ff)">  
     <group name="$(arg prefix)first_finger">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
       <chain base_link="$(arg prefix)palm" tip_link="$(arg prefix)fftip" />
     </group>
   </xacro:if>
   <xacro:if value="$(arg mf)">
     <group name="$(arg prefix)middle_finger">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
       <chain base_link="$(arg prefix)palm" tip_link="$(arg prefix)mftip" />
     </group>
   </xacro:if>
   <xacro:if value="$(arg rf)">
     <group name="$(arg prefix)ring_finger">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
       <chain base_link="$(arg prefix)palm" tip_link="$(arg prefix)rftip" />
     </group>
   </xacro:if>
   <xacro:unless value="$(arg is_lite)">
     <xacro:if value="$(arg lf)">
       <group name="$(arg prefix)little_finger">
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
+        <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
         <chain base_link="$(arg prefix)palm" tip_link="$(arg prefix)lftip" />
       </group>
     </xacro:if>
   </xacro:unless>
   <xacro:if value="$(arg th)">
     <group name="$(arg prefix)thumb">
-      <xacro:thumb prefix="$(arg prefix)" is_lite="$(arg is_lite)"/>
+      <xacro:thumbjoints prefix="$(arg prefix)"/>
       <chain base_link="$(arg prefix)palm" tip_link="$(arg prefix)thtip" />
     </group>
   </xacro:if>
@@ -91,24 +106,24 @@
   <!-- all fingers group -->     
   <group name="$(arg prefix)fingers">
    <xacro:if value="$(arg th)">
-      <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
+      <xacro:thumbjoints prefix="$(arg prefix)" />
       <group name="$(arg prefix)thumb" />
     </xacro:if>
     <xacro:if value="$(arg ff)">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
       <group name="$(arg prefix)first_finger" />
     </xacro:if>
     <xacro:if value="$(arg mf)">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
       <group name="$(arg prefix)middle_finger" />
     </xacro:if>
     <xacro:if value="$(arg rf)">
-      <xacro:finger prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
+      <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
       <group name="$(arg prefix)ring_finger" />
     </xacro:if>
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
+        <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
         <group name="$(arg prefix)little_finger" />
       </xacro:if>
     </xacro:unless>      
@@ -118,28 +133,30 @@
   <xacro:if value="$(arg th)">
     <xacro:if value="$(arg ff)">
       <group name="$(arg prefix)first_finger_thumb">
-        <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
+        <xacro:thumbjoints prefix="$(arg prefix)" />
+        <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="FF" lf="0"/>
       </group>
     </xacro:if>
     <xacro:if value="$(arg mf)">
       <group name="$(arg prefix)middle_finger_thumb">
-        <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
+        <xacro:thumbjoints prefix="$(arg prefix)"/>
+        <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="MF" lf="0"/>
       </group>
     </xacro:if>
     <xacro:if value="$(arg rf)">
       <group name="$(arg prefix)ring_finger_thumb">
-        <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
+        <xacro:thumbjoints prefix="$(arg prefix)"/>
+        <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="RF" lf="0"/>
       </group>
     </xacro:if>
-    <xacro:if value="$(arg lf)">
-      <group name="$(arg prefix)little_finger_thumb">
-        <xacro:thumb prefix="$(arg prefix)"  is_lite="$(arg is_lite)"/>
-        <xacro:finger prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
-      </group>
-    </xacro:if>
+    <xacro:unless value="$(arg is_lite)">
+      <xacro:if value="$(arg lf)">
+        <group name="$(arg prefix)little_finger_thumb">
+          <xacro:thumbjoints prefix="$(arg prefix)"/>
+          <xacro:fingerjoints prefix="$(arg prefix)" joint_prefix="LF" lf="1"/>
+        </group>
+      </xacro:if>
+    </xacro:unless>  
   </xacro:if>   
     
   <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
@@ -147,7 +164,7 @@
   <!-- hand state --> 
   <group_state name="hand_zero" group="$(arg prefix)shadow_hand">
     <xacro:if value="$(arg th)">
-        <xacro:thumb_state_open  prefix="$(arg prefix)" is_lite="$(arg is_lite)" />
+        <xacro:thumb_state_open  prefix="$(arg prefix)" />
     </xacro:if>
     <xacro:if value="$(arg ff)">
         <xacro:finger_state_open  prefix="$(arg prefix)" joint_prefix="FF" lf="0" />
@@ -192,14 +209,14 @@
   </xacro:unless>
   <xacro:if value="$(arg th)">
     <group_state name="thumb_open" group="$(arg prefix)thumb">
-        <xacro:thumb_state_open  prefix="$(arg prefix)" is_lite="$(arg is_lite)" />
+        <xacro:thumb_state_open  prefix="$(arg prefix)" />
     </group_state>
   </xacro:if>
 
   <!-- all fingers state -->  
   <group_state name="fingers_open" group="$(arg prefix)fingers">
     <xacro:if value="$(arg th)">
-        <xacro:thumb_state_open  prefix="$(arg prefix)" is_lite="$(arg is_lite)" />
+        <xacro:thumb_state_open  prefix="$(arg prefix)" />
     </xacro:if>
     <xacro:if value="$(arg ff)">
         <xacro:finger_state_open  prefix="$(arg prefix)" joint_prefix="FF" lf="0" />
@@ -269,37 +286,37 @@
   <xacro:hand_collisions prefix="$(arg prefix)" /> 
   <!-- single fingers collision --> 
   <xacro:if value="$(arg ff)">
-     <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="ff" lf="0" />
+     <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="ff" lf="0" bio="$(arg ff_bio)"/>
   </xacro:if>
   <xacro:if value="$(arg mf)">
-     <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="mf" lf="0" />
+     <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="mf" lf="0" bio="$(arg mf_bio)"/>
   </xacro:if>
   <xacro:if value="$(arg rf)">
-     <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="rf" lf="0" />
+     <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="rf" lf="0" bio="$(arg rf_bio)"/>
   </xacro:if>
   <xacro:unless value="$(arg is_lite)">
     <xacro:if value="$(arg lf)">
-       <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="lf" lf="1" />
+       <xacro:finger_collisions prefix="$(arg prefix)" link_prefix="lf" lf="1" bio="$(arg lf_bio)"/>
     </xacro:if>
   </xacro:unless>  
   <xacro:if value="$(arg th)">
-    <xacro:thumb_collisions prefix="$(arg prefix)" /> 
+    <xacro:thumb_collisions prefix="$(arg prefix)" bio="$(arg th_bio)"/> 
   </xacro:if>
 
   <!-- pairs with thumb for collision-->
   <xacro:if value="$(arg th)">
     <xacro:if value="$(arg ff)">
-      <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="ff" far="0" lf="0" />
+      <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="ff" far="0" lf="0" thbio="$(arg th_bio)" bio="$(arg ff_bio)"/>
     </xacro:if>
     <xacro:if value="$(arg mf)">
-      <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="mf" far="1" lf="0" />
+      <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="mf" far="1" lf="0" thbio="$(arg th_bio)" bio="$(arg mf_bio)"/>
     </xacro:if>
     <xacro:if value="$(arg rf)">
-      <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="rf" far="1" lf="0" />
+      <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="rf" far="1" lf="0" thbio="$(arg th_bio)" bio="$(arg rf_bio)"/>
     </xacro:if>
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
-          <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="lf" far="1" lf="1" />
+          <xacro:finger_thumb_collisions  prefix="$(arg prefix)" link_prefix="lf" far="1" lf="1" thbio="$(arg th_bio)" bio="$(arg lf_bio)"/>
       </xacro:if>
     </xacro:unless>
   </xacro:if>
@@ -307,25 +324,25 @@
   <!-- pairs with other fingers for collision-->
   <xacro:if value="$(arg ff)">
     <xacro:if value="$(arg mf)">
-      <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="mf"  lf="0" />
+      <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="mf"  lf="0" bio="$(arg ff_bio)" bio2="$(arg mf_bio)"/>
     </xacro:if>
     <xacro:if value="$(arg rf)">
-      <xacro:finger_farfinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="rf"  lf="0" />
+      <xacro:finger_farfinger_collisions prefix="$(arg prefix)" link_prefix="ff" link_prefix2="rf"  lf="0" bio="$(arg ff_bio)" bio2="$(arg rf_bio)"/>
     </xacro:if>   
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
-        <xacro:first_little_collisions prefix="$(arg prefix)" />
+        <xacro:first_little_collisions prefix="$(arg prefix)" bio="$(arg ff_bio)" bio2="$(arg lf_bio)" />
       </xacro:if> 
     </xacro:unless>
   </xacro:if> 
 
   <xacro:if value="$(arg mf)">
     <xacro:if value="$(arg rf)">
-      <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="mf" link_prefix2="rf"  lf="0" />
+      <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="mf" link_prefix2="rf"  lf="0" bio="$(arg mf_bio)" bio2="$(arg rf_bio)"/>
     </xacro:if>
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
-        <xacro:finger_farfinger_collisions prefix="$(arg prefix)" link_prefix="mf" link_prefix2="lf"  lf="1" />
+        <xacro:finger_farfinger_collisions prefix="$(arg prefix)" link_prefix="mf" link_prefix2="lf"  lf="1" bio="$(arg mf_bio)" bio2="$(arg lf_bio)"/>
       </xacro:if>   
     </xacro:unless> 
   </xacro:if>
@@ -333,7 +350,7 @@
   <xacro:if value="$(arg rf)">
     <xacro:unless value="$(arg is_lite)">
       <xacro:if value="$(arg lf)">
-        <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="rf" link_prefix2="lf"  lf="1" />
+        <xacro:finger_closefinger_collisions prefix="$(arg prefix)" link_prefix="rf" link_prefix2="lf"  lf="1" bio="$(arg rf_bio)" bio2="$(arg lf_bio)"/>
       </xacro:if>
     </xacro:unless>
   </xacro:if>

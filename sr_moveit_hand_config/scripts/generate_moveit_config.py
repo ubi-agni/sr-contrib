@@ -136,7 +136,7 @@ def generate_kinematics(srdf,template_path="kinematics_template.yaml" , output_p
     Generate kinematics yaml and direct it to file or load it to parameter server.
 	    @param srdf: Parsed SRDF
 	    @type  srdf: XML object
-      @param template_path: file_path to the required yaml template file
+      @param template_path: file_path to the required yaml template file (biotac version will be loaded automatically)
 	    @type  template_path: str
 	    @param output_path: file_path to save the generated data in, will load on parameter server if empty
 	    @type  output_path: str
@@ -144,22 +144,71 @@ def generate_kinematics(srdf,template_path="kinematics_template.yaml" , output_p
 	    @type  ns_: str
     """
     output_str="" 
+    # open template file
     stream = open(template_path, 'r')
     yamldoc = yaml.load(stream)
+    # open biotac template file
+    biotac_template_path = template_path[0:template_path.find("_template")]+"_biotac_template.yaml"
+    biotac_stream = open(biotac_template_path, 'r')
+    yamldocbiotac = yaml.load(biotac_stream)
+    
     # find prefix
     prefix=find_prefix(srdf)
+
+    # find full hand key name
+    sh_group=None
+    for group in srdf.getElementsByTagName("group"):
+      name=group.getAttribute("name")
+      if name.endswith("shadow_hand"):
+        sh_group=group
+        break
+        
+    # detect biotac fingers
+    is_bio={"first_finger": False,
+            "middle_finger": False,
+            "ring_finger": False,
+            "little_finger": False,
+            "thumb": False}
+
+    links = sh_group.getElementsByTagName("link")
+    for mylink in links:
+      link_name = mylink.getAttribute("name")
+        
+      if not is_bio["first_finger"] and link_name.endswith("ffbiotac"):
+        is_bio["first_finger"]=True
+      if not is_bio["middle_finger"] and link_name.endswith("mfbiotac"):
+        is_bio["middle_finger"]=True
+      if not is_bio["ring_finger"] and link_name.endswith("rfbiotac"):
+        is_bio["ring_finger"]=True
+      if not is_bio["little_finger"] and link_name.endswith("lfbiotac"):
+        is_bio["little_finger"]=True
+      if not is_bio["thumb"] and link_name.endswith("thbiotac"):
+        is_bio["thumb"]=True
+    
     # for each group
     for group in srdf.getElementsByTagName("group"):
+      kinematics_config=None
       # strip prefix if any
       group_name=group.getAttribute("name")
       group_name=group_name[len(prefix):]
-      if yamldoc.has_key(group_name):
-        kinematics_config = yamldoc[group.getAttribute("name")]
+      # check for biotac link for this group
+      is_group_bio = is_bio.get(group_name)
+      if is_group_bio:
+        if yamldocbiotac.has_key(group_name):
+          kinematics_config = yamldocbiotac[group.getAttribute("name")]
+      else:
+        if yamldoc.has_key(group_name):
+          kinematics_config = yamldoc[group.getAttribute("name")]
+          
+      if kinematics_config !=None:
         output_str+=group.getAttribute("name")+":\n"
         kinematics_dump = yaml.dump(kinematics_config, default_flow_style=False, allow_unicode=True)
         output_str+=yaml_reindent(kinematics_dump,2)
         output_str+="\n"
+        
+        
     stream.close()
+    biotac_stream.close()
     # load on param server or output to file
     upload_output_params(output_str,output_path,ns_)
     
