@@ -13,16 +13,17 @@
 
 
   <!-- The semantic description that corresponds to the URDF -->
-  <node name="generate_srdf" pkg="sr_moveit_hand_config" type="generate_srdf.py" respawn="false" output="screen" args="$(find sr_moveit_hand_config)/config/shadowhands.srdf.xacro" />
+  <node name="generate_srdf" pkg="sr_moveit_hand_config" type="generate_srdf.py" respawn="false" output="screen" args="$(find sr_moveit_hand_config)/config/shadowhands.srdf.xacro --" />
   
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
-    <node name="load_joint_limits" pkg="sr_moveit_hand_config" type="generate_load_moveit_config.py" respawn="false" output="screen" args="joint_limits $(find sr_moveit_hand_config)/config/joint_limits_template.yaml" />
+    <node name="load_joint_limits" pkg="sr_moveit_hand_config" type="generate_load_moveit_config.py" respawn="false" output="screen" args="joint_limits $(find sr_moveit_hand_config)/config/joint_limits_template.yaml --" />
+
   </group>
 
   <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->
   <group ns="move_group">
-    <node name="load_kinematics" pkg="sr_moveit_hand_config" type="generate_load_moveit_config.py" respawn="false" output="screen" args="kinematics $(find sr_moveit_hand_config)/config/kinematics_template.yaml"/>
+    <node name="load_kinematics" pkg="sr_moveit_hand_config" type="generate_load_moveit_config.py" respawn="false" output="screen" args="kinematics $(find sr_moveit_hand_config)/config/kinematics_template.yaml --" />
   </group>
   
 </launch>
