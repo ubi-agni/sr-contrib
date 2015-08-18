@@ -7,10 +7,7 @@ import sys
 import time
 import rospy
 from generate_moveit_config import * 
-import xml
-from xml.dom.minidom import parse, parseString
-
-
+from srdfdom.srdf import SRDF
 
 
 if __name__ == '__main__':
@@ -34,7 +31,7 @@ if __name__ == '__main__':
       # load the srdf from the parameter server
       srdf_str=rospy.get_param('/robot_description_semantic')   
       # parse it
-      robot = parseString(srdf_str)
+      robot = SRDF.from_xml_string(srdf_str)
       # generate the desired yaml and load it.
       if command == "fake_controllers":
         generate_fake_controllers(robot,ns_=ns)

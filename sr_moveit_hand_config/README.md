@@ -56,7 +56,7 @@ The MoveIt! generated launch files were adapted to use the generators.
 ## Usage
 
 By default the demo.launch loads a shadowhand_motor urdf on the parameter server and starts the demo.
-However, the planning_context or move_group do not load the robot_description by default and except robot_description to be on the param server,
-but load_robot_description arg can enforce the urdf loading. This loaded robot_description should contain one of the possible hand.
+However, the planning_context or move_group do not load the robot_description by default and expect robot_description to be on the param server,
+but _load_robot_description_ arg can enforce the urdf loading. This loaded robot_description should contain one of the possible hand.
 
 
