@@ -38,11 +38,14 @@
 """
 
 import sys
+import os
+
 from urdf_parser_py.urdf import URDF
 import xacro
 import rospy
 from xml.dom.minidom import parse
-
+from xacro import set_substitution_args_context
+from rosgraph.names import load_mappings
 
 if __name__ == '__main__':
 
@@ -105,26 +108,48 @@ if __name__ == '__main__':
 
         #TODO extract the robot name
         # selection the correct hand version through arg substitution
-        mappings = dict(robot_name='shadowhand_motor',
-                        ff=str(int(ff)), mf=str(int(mf)),
-                        rf=str(int(rf)), lf=str(int(lf)),
-                        th=str(int(th)), is_lite=str(int(is_lite)),
-                        ff_bio=str(int(ffbio)), mf_bio=str(int(mfbio)),
-                        rf_bio=str(int(rfbio)), lf_bio=str(int(lfbio)),
-                        th_bio=str(int(thbio)))
+
         if prefix:
-            mappings.update(prefix=prefix)
+            set_substitution_args_context(
+                load_mappings(['prefix:=' +
+                              str(prefix),
+                              'robot_name:=shadowhand_motor', 'ff:=' +
+                              str(int(ff)), 'mf:=' + str(int(mf)),
+                              'rf:=' + str(int(rf)), 'lf:=' +
+                              str(int(lf)), 'th:=' + str(int(th)),
+                              'is_lite:=' + str(int(is_lite)),
+                              'ff_bio:=' + str(int(ffbio)), 'mf_bio:=' +
+                              str(int(mfbio)), 'rf_bio:=' +
+                              str(int(rfbio)), 'lf_bio:=' +
+                              str(int(lfbio)), 'th_bio:=' +
+                              str(int(thbio))]))
+
             # the prefix version of the srdf_xacro must be loaded
             srdf_xacro_filename = srdf_xacro_filename.replace(
                 ".srdf.xacro", "_prefix.srdf.xacro")
             print "file loaded ", srdf_xacro_filename
+
+        else:
+            set_substitution_args_context(
+                load_mappings(['robot_name:=shadowhand_motor', 'ff:=' +
+                              str(int(ff)), 'mf:=' + str(int(mf)),
+                              'rf:=' + str(int(rf)), 'lf:=' +
+                              str(int(lf)), 'th:=' + str(int(th)),
+                              'is_lite:=' + str(int(is_lite)),
+                              'ff_bio:=' + str(int(ffbio)), 'mf_bio:=' +
+                              str(int(mfbio)), 'rf_bio:=' +
+                              str(int(rfbio)), 'lf_bio:=' +
+                              str(int(lfbio)), 'th_bio:=' +
+                              str(int(thbio))]))
 
         # open and parse the xacro.srdf file
         srdf_xacro_file = open(srdf_xacro_filename, 'r')
         srdf_xacro_xml = parse(srdf_xacro_file)
 
         # expand the xacro
-        xacro.process_doc(srdf_xacro_xml, mappings=mappings)
+        xacro.process_includes(srdf_xacro_xml,
+                               os.path.dirname(sys.argv[0]))
+        xacro.eval_self_contained(srdf_xacro_xml)
 
         if len(sys.argv) > 2:
             OUTPUT_PATH = sys.argv[2]

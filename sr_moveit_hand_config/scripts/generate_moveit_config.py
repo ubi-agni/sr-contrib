@@ -168,11 +168,11 @@ def generate_ompl_planning(robot,
                     proj_eval = group_config["projection_evaluator"]
                     proj_eval.strip()
                     proj_eval_new = proj_eval_re.sub(r'joints(' +
-                                                        prefix +
-                                                        r'\g<1>,' +
-                                                        prefix +
-                                                        r'\g<2>)',
-                                                        proj_eval)
+                                                     prefix +
+                                                     r'\g<1>,' +
+                                                     prefix +
+                                                     r'\g<2>)',
+                                                     proj_eval)
                     group_config["projection_evaluator"] = proj_eval_new
             group_dump = yaml.dump(group_config,
                                    default_flow_style=False,
@@ -258,6 +258,14 @@ def generate_kinematics(robot, template_path="kinematics_template.yaml",
                 kinematics_config = yamldoc[group_name]
 
         if kinematics_config is not None:
+            if prefix:
+                if "tip_name" in kinematics_config:
+                    tip_name = kinematics_config["tip_name"]
+                    kinematics_config["tip_name"] = prefix+tip_name
+                if "root_name" in kinematics_config:
+                    root_name = kinematics_config["root_name"]
+                    kinematics_config["root_name"] = prefix+root_name
+
             output_str += group.name+":\n"
             output_str += yaml_reindent(yaml.dump(kinematics_config,
                                         default_flow_style=False,
