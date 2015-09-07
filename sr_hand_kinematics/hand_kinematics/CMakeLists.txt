@@ -34,14 +34,14 @@ target_link_libraries(test_kinematics_as_service ${catkin_LIBRARIES})
 add_dependencies(test_kinematics_as_service ${hand_kinematics_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 install(TARGETS hand_kinematics hand_kinematics_coupling_lib
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
-install(TARGETS hand_kinematics_coupling 
-    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+install(TARGETS hand_kinematics_coupling
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 install(
- FILES
-   hand_kinematics_plugins.xml
- DESTINATION
-   ${CATKIN_PACKAGE_SHARE_DESTINATION})
+        FILES
+        hand_kinematics_plugins.xml
+        DESTINATION
+        ${CATKIN_PACKAGE_SHARE_DESTINATION})
