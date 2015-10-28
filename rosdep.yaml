@@ -1,3 +1,0 @@
-liblapack:
-  ubuntu: liblapack-dev
-  debian: liblapack-dev

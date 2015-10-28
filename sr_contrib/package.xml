@@ -1,0 +1,33 @@
+<package>
+  <name>sr_contrib</name>
+  <version>0.1.0</version>
+  <description>This stack contains different high level packages which we find useful. They can be slightly experimental and are not as stable than the default shadow_robot stack.</description>
+  <maintainer email="software@shadowrobot.com">Shadow Robot's software team</maintainer>
+
+  <license>BSD,GPL,LGPL</license>
+
+  <url type="website">http://ros.org/wiki/sr_contrib</url>
+  <url type="website">http://www.shadowrobot.com/products/dexterous-hand/</url>
+  <url type="repository">https://github.com/shadow-robot/sr-contrib</url>
+  <url type="bugtracker">https://github.com/shadow-robot/sr-contrib/issues</url>
+
+  <author>Ugo Cupcic</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>hand_kinematics</run_depend>
+  <run_depend>kdl_coupling</run_depend>
+  <run_depend>sr_moveit_hand_config</run_depend>
+  
+
+  <!-- Dependencies needed only for running tests. -->
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
