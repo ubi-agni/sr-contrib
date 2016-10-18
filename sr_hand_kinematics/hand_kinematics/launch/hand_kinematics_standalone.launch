@@ -1,5 +1,4 @@
 <launch>
-  <!--	<param name="robot_description" command="$(find xacro)/xacro.py '$(find sr_hand)/model/robots/xacro/arm_and_hand_motor.urdf.xacro'"/>-->
   <include file="$(find sr_description)/loaders/load_hand_model.launch" >
    <arg name="robot_param" value="robot_description" />
   </include>
@@ -34,5 +33,3 @@
     <param name="epsilon" type="double" value="0.001"/>
   </node>
 </launch>
-
-
