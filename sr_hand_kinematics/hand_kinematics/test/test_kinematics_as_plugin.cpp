@@ -71,7 +71,7 @@ class MyTest
     ROS_INFO("Plugin name: %s",plugin_name.c_str());
     try
     {
-      kinematics_solver_ = kinematics_loader_->createInstance(plugin_name);
+      kinematics_solver_ = kinematics_loader_->createUniqueInstance(plugin_name);
     }
     catch(pluginlib::PluginlibException& ex)//handle the class failing to load
     {

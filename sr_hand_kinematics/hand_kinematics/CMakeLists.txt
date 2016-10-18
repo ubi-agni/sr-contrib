@@ -10,6 +10,7 @@ catkin_package(
     INCLUDE_DIRS include
     LIBRARIES hand_kinematics hand_kinematics_coupling_lib
 )
+add_compile_options(-std=c++11)
 
 add_library(hand_kinematics src/hand_kinematics_coupling_plugin.cpp
     src/hand_kinematics_utils.cpp)
