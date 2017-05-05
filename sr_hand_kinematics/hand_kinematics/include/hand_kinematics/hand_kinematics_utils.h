@@ -52,8 +52,7 @@
 
 #include <moveit_msgs/GetPositionFK.h>
 #include <moveit_msgs/GetPositionIK.h>
-#include <moveit_msgs/GetConstraintAwarePositionIK.h>
-#include <moveit_msgs/GetKinematicSolverInfo.h>
+#include <moveit_msgs/KinematicSolverInfo.h>
 
 namespace hand_kinematics
 {
@@ -125,6 +124,6 @@ namespace hand_kinematics
   Eigen::MatrixXd updateCouplingLF(const KDL::JntArray &q);
 
   Eigen::MatrixXd updateCouplingTH(const KDL::JntArray &q);
-} // namespace hand_kinematics
+}  // namespace hand_kinematics
 
 #endif  // HAND_KINEMATICS_HAND_KINEMATICS_UTILS_H

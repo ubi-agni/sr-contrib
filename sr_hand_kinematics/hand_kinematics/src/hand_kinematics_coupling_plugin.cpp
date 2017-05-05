@@ -7,7 +7,7 @@
 // -Added support for coupled joints of Shadow Hand. Now, the coupling is a fixed 1:1 value
 // but the updateCoupling functions can be modified in order to implement dynamic coupling
 // (which can be modified depending on the values of the joint values of the finger).
-// -Use of WDLS velocity IK method in order to solve IK only for 3D position. 
+// -Use of WDLS velocity IK method in order to solve IK only for 3D position.
 // -IK is solved at the fingertip frame, which should be defined in the URDF/Xacro file of the
 //  Shadow Hand.
 
@@ -32,8 +32,6 @@ using std::string;
 static const std::string IK_WITH_COLLISION_SERVICE = "get_constraint_aware_ik";
 static const std::string IK_SERVICE = "get_ik";
 static const std::string FK_SERVICE = "get_fk";
-static const std::string IK_INFO_SERVICE = "get_ik_solver_info";
-static const std::string FK_INFO_SERVICE = "get_fk_solver_info";
 
 #define IK_EPS  1e-5
 
@@ -41,7 +39,8 @@ static const std::string FK_INFO_SERVICE = "get_fk_solver_info";
 namespace hand_kinematics
 {
   static const double IK_DEFAULT_TIMEOUT = 10.0;
-//register the plugin
+
+  // register the plugin
   PLUGINLIB_EXPORT_CLASS(hand_kinematics::HandKinematicsPlugin, kinematics::KinematicsBase)
 
   HandKinematicsPlugin::HandKinematicsPlugin() : active_(false)
@@ -132,7 +131,7 @@ namespace hand_kinematics
     Mx(4, 4) = 0.0;  // rotation Y
     Mx(5, 5) = 0.0;  // rotation Z
 
-    ROS_INFO("CHAIN--> Joints:%d, Ind. Joints:%d, Segments:%d", kdl_chain_.getNrOfJoints(),
+    ROS_DEBUG("CHAIN--> Joints:%d, Ind. Joints:%d, Segments:%d", kdl_chain_.getNrOfJoints(),
              kdl_chain_.getNrOfIndJoints(), kdl_chain_.getNrOfSegments());
     // Get Solver Parameters
     int maxIterations;

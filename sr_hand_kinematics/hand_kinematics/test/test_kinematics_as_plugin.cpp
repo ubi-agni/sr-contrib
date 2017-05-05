@@ -71,12 +71,12 @@ public:
       EXPECT_TRUE(0);
       return false;
     }
-    ROS_INFO("Plugin name: %s",plugin_name.c_str());
+    ROS_INFO("Plugin name: %s", plugin_name.c_str());
     try
     {
       kinematics_solver_ = kinematics_loader_->createUniqueInstance(plugin_name);
     }
-    catch(pluginlib::PluginlibException& ex)  // handle the class failing to load
+    catch (pluginlib::PluginlibException &ex)  // handle the class failing to load
     {
       ROS_ERROR("The plugin failed to load. Error: %s", ex.what());
       EXPECT_TRUE(0);
