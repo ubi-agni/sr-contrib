@@ -140,19 +140,19 @@ namespace hand_kinematics
     if (!private_handle.getParam("maxIterations", maxIterations))
     {
       maxIterations = 1000;
-      ROS_WARN("No maxIterations on param server, using %d as default", maxIterations);
+      ROS_INFO("No maxIterations on param server, using %d as default", maxIterations);
     }
 
     if (!private_handle.getParam("epsilon", epsilon))
     {
       epsilon = 1e-2;
-      ROS_WARN("No epsilon on param server, using %f as default", epsilon);
+      ROS_INFO("No epsilon on param server, using %f as default", epsilon);
     }
 
     if (!private_handle.getParam("lambda", lambda))
     {
       lambda = 0.01;
-      ROS_WARN("No lambda on param server, using %f as default", lambda);
+      ROS_INFO("No lambda on param server, using %f as default", lambda);
     }
 
     ROS_DEBUG("IK Solver, maxIterations: %d, epsilon: %f, lambda: %f", maxIterations, epsilon, lambda);
