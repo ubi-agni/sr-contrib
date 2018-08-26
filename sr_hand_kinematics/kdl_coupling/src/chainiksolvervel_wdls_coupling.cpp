@@ -31,24 +31,45 @@ namespace KDL
   ChainIkSolverVel_wdls_coupling::ChainIkSolverVel_wdls_coupling(const Chain_coupling &_chain, double _eps,
                                                                  int _maxiter) :
           chain(_chain),
+          nj(chain.getNrOfJoints()),
+          nij(chain.getNrOfIndJoints()),
           jnt2jac(chain),
-          jac(chain.getNrOfIndJoints()),
-          U(MatrixXd::Zero(6, chain.getNrOfIndJoints())),
-          S(VectorXd::Zero(chain.getNrOfIndJoints())),
-          V(MatrixXd::Zero(chain.getNrOfIndJoints(), chain.getNrOfIndJoints())),
+          jac(nij),
+          U(MatrixXd::Zero(6, nij)),
+          S(VectorXd::Zero(nij)),
+          V(MatrixXd::Zero(nij, nij)),
           eps(_eps),
           maxiter(_maxiter),
-          tmp(VectorXd::Zero(chain.getNrOfIndJoints())),
-          tmp_jac(MatrixXd::Zero(6, chain.getNrOfJoints())),
-          tmp_jac_weight1(MatrixXd::Zero(6, chain.getNrOfIndJoints())),
-          tmp_jac_weight2(MatrixXd::Zero(6, chain.getNrOfIndJoints())),
+          tmp(VectorXd::Zero(nij)),
+          tmp_jac(MatrixXd::Zero(6, nj)),
+          tmp_jac_weight1(MatrixXd::Zero(6, nij)),
+          tmp_jac_weight2(MatrixXd::Zero(6, nij)),
           tmp_ts(MatrixXd::Zero(6, 6)),
-          tmp_js(MatrixXd::Zero(chain.getNrOfIndJoints(), chain.getNrOfIndJoints())),
+          tmp_js(MatrixXd::Zero(nij, nij)),
           weight_ts(MatrixXd::Identity(6, 6)),
-          weight_js(MatrixXd::Identity(chain.getNrOfIndJoints(), chain.getNrOfIndJoints())),
+          weight_js(MatrixXd::Identity(nij, nij)),
           lambda(0.0)
   {
   }
+
+ void ChainIkSolverVel_wdls_coupling::updateInternalDataStructures() {
+        jnt2jac.updateInternalDataStructures();
+        nj = chain.getNrOfJoints();
+        nij = chain.getNrOfIndJoints();
+        jac.resize(nij);
+        MatrixXd z6nij = MatrixXd::Zero(6,nij);
+        VectorXd znij = VectorXd::Zero(nij);
+        MatrixXd znijnij = MatrixXd::Zero(nij,nij);
+        U.conservativeResizeLike(z6nij);
+        S.conservativeResizeLike(znij);
+        V.conservativeResizeLike(znijnij);
+        tmp.conservativeResizeLike(znij);
+        tmp_jac.conservativeResizeLike(z6nij);
+        tmp_jac_weight1.conservativeResizeLike(z6nij);
+        tmp_jac_weight2.conservativeResizeLike(z6nij);
+        tmp_js.conservativeResizeLike(znijnij);
+        weight_js.conservativeResizeLike(MatrixXd::Identity(nij,nij));
+    }
 
   ChainIkSolverVel_wdls_coupling::~ChainIkSolverVel_wdls_coupling()
   {

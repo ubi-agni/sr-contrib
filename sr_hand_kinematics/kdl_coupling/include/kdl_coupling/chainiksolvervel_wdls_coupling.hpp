@@ -150,9 +150,13 @@ namespace KDL
 
     void setLambda(const double &lambda);
 
+    virtual void updateInternalDataStructures();
+
   private:
     Chain_coupling chain;
     ChainJntToJacSolver_coupling jnt2jac;
+    unsigned int nj;
+    unsigned int nij;
     Jacobian jac;
     Eigen::MatrixXd U;
     Eigen::VectorXd S;

@@ -59,6 +59,8 @@ namespace KDL
      */
     int JntToJac(const JntArray &q_in, Jacobian &jac);
 
+    virtual void updateInternalDataStructures();
+
   private:
     const Chain_coupling chain;
     Twist t_tmp;

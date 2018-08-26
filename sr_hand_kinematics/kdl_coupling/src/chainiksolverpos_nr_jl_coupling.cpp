@@ -26,19 +26,30 @@
 #include <kdl_coupling/chainiksolverpos_nr_jl_coupling.hpp>
 #include <kdl_coupling/chainiksolvervel_wdls_coupling.hpp>
 
+#include <limits>
+
 namespace KDL
 {
   ChainIkSolverPos_NR_JL_coupling::ChainIkSolverPos_NR_JL_coupling(const Chain_coupling &_chain, const JntArray &_q_min,
                                                                    const JntArray &_q_max, ChainFkSolverPos &_fksolver,
                                                                    ChainIkSolverVel &_iksolver,
                                                                    unsigned int _maxiter, double _eps) :
-          chain(_chain), q_min(chain.getNrOfJoints()), q_max(chain.getNrOfJoints()), fksolver(_fksolver),
+          chain(_chain),  nj(chain.getNrOfJoints()), q_min(nj), q_max(nj), fksolver(_fksolver),
           iksolver(_iksolver), delta_q(_chain.getNrOfJoints()),
           maxiter(_maxiter), eps(_eps)
   {
     q_min = _q_min;
     q_max = _q_max;
   }
+
+ void ChainIkSolverPos_NR_JL_coupling::updateInternalDataStructures() {
+       nj = chain.getNrOfJoints();
+       q_min.data.conservativeResizeLike(Eigen::VectorXd::Constant(nj,std::numeric_limits<double>::min()));
+       q_max.data.conservativeResizeLike(Eigen::VectorXd::Constant(nj,std::numeric_limits<double>::max()));
+       iksolver.updateInternalDataStructures();
+       fksolver.updateInternalDataStructures();
+       delta_q.resize(nj);
+   }
 
   int ChainIkSolverPos_NR_JL_coupling::CartToJnt(const JntArray &q_init, const Frame &p_in, JntArray &q_out)
   {

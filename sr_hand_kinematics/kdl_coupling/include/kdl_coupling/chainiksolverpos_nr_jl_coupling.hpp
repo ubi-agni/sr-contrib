@@ -69,8 +69,11 @@ namespace KDL
 
     virtual int CartToJnt(const JntArray &q_init, const Frame &p_in, JntArray &q_out);
 
+    virtual void updateInternalDataStructures();
+
   private:
     const Chain_coupling chain;
+    unsigned int nj;
     JntArray q_min;
     JntArray q_max;
     ChainFkSolverPos &fksolver;

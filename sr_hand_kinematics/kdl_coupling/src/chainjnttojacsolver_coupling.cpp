@@ -34,6 +34,9 @@ namespace KDL
   {
   }
 
+    void ChainJntToJacSolver_coupling::updateInternalDataStructures() {
+    }
+
   int ChainJntToJacSolver_coupling::JntToJac(const JntArray &q_in, Jacobian &jac)
   {
     unsigned int jac_columns = chain.getNrOfIndJoints();
